@@ -1,83 +1,80 @@
 # Sistema de Gestión para Cafetería "Café Luna"
 
-Este proyecto es una propuesta de sistema integral de gestión para la cafetería "Café Luna", diseñado para optimizar sus operaciones diarias, desde el manejo de pedidos hasta el control de inventario y la generación de reportes financieros.
-
-## Problemática Identificada
-
-Actualmente, "Café Luna" enfrenta desafíos debido al manejo manual de sus operaciones, lo que genera pérdidas operativas, dificultades en el control de inventario y una comunicación ineficiente entre el personal.
-
-## Propuesta Central
-
-Implementar un sistema digital completo que elimine el manejo manual de pedidos, proporcione control automático del inventario, genere reportes financieros detallados, respete las reglas operativas internas y mejore la comunicación entre el personal, garantizando un servicio más eficiente y reduciendo las pérdidas operativas.
+Este es un prototipo de sistema de gestión para la cafetería "Café Luna", desarrollado con HTML, CSS y JavaScript puro. El sistema está diseñado para demostrar funcionalidades clave en la administración de una cafetería, incluyendo gestión de inventario, sistema de pedidos para el personal, reportes financieros y, ahora, una interfaz de pedidos para el cliente con simulación de pago.
 
 ## Funcionalidades Principales
 
-1.  **Control Automático de Inventario:**
-    * Registro permanente de ingredientes y productos.
-    * Alertas automáticas si el stock de un ingrediente baja del 20% (RN-010).
-    * Solo el Barista Senior puede editar el inventario (RN-007).
-    * No se permite registrar pedidos si no hay inventario suficiente (RN-008).
+El sistema aborda varios Requerimientos No Funcionales (RNF) y Funcionales (RNF) clave para una operación eficiente:
 
-2.  **Sistema Digital de Pedidos Multiplataforma:**
-    * Menú dinámico que solo muestra productos disponibles.
-    * Cálculo automático de totales (productos + IVA – descuento) (RN-015).
-    * Descuentos mayores al 15% requieren autorización de la Propietaria (RN-006).
-    * Funciones de venta desactivadas después de las 9:30 PM (RN-012).
-    * No se pueden cancelar pedidos si faltan menos de 30 minutos para la entrega (RN-018).
-    * Asignación automática de "cliente frecuente" (más de 10 compras/mes) (RN-013).
-    * Marcar producto como "popular" si supera 50 unidades vendidas/semana (RN-014).
-    * Autenticación de usuario con credenciales únicas (RN-009).
+### Para el Personal (Interfaz de Administración)
+Accesible vía `index.html`
 
-3.  **Gestión Completa de Pagos y Caja:**
-    * Registro de pagos en efectivo o bancarios.
-    * Control automático de cierre de caja (antes de las 9:30 PM) (RN-003).
-    * Reportes diarios generados automáticamente (7:00 AM - 9:00 PM) (RN-016).
-    * Sistema operativo desde 6:30 AM (RN-002).
-    * Extensión de horario en días festivos hasta las 10:00 PM con autorización (RN-004).
-    * Backup automático cada 4 horas y a las 10:00 PM (RN-017 - **NOTA: Esta funcionalidad se implementaría a nivel de backend**).
+* **RNF-001 (Autenticación de Usuarios):** Sistema de inicio de sesión con roles diferenciados.
+* **RNF-005 (Dashboard):** Panel de control principal después del inicio de sesión.
+* **RNF-007 (Control de Inventario):** Visualización y gestión de stock de ingredientes y productos.
+* **RNF-008 (Gestión de Stock):** No permite agregar productos a pedidos si el stock es 0.
+* **RNF-010 (Edición de Inventario):** La propietaria puede editar y agregar ítems al inventario.
+* **RNF-006 (Sistema de Pedidos):** Registro de pedidos por parte del personal (Baristas/Meseros).
+* **RNF-012 (Horario de Venta):** Deshabilita la toma de pedidos (y pagos) después de las 9:30 PM.
+* **RNF-013 (Gestión de Pedidos):** Simulación de seguimiento y manejo de pedidos.
+* **RNF-014 (Productos Populares):** (Futura Implementación/Indicador) Permite identificar productos de alta demanda.
+* **RNF-003 (Cierre de Caja):** Simulación de proceso de cierre de caja.
+* **RNF-016 (Reportes de Ventas):** Generación de reportes diarios y financieros (accesible solo por propietaria).
+* **RNF-017 (Registro de Pagos):** Simulación de registro de transacciones de pago.
 
-4.  **Sistema de Comunicación Interna:**
-    * Coordinación de roles: Propietaria, Barista Senior, Barista, Mesero.
-    * Pedidos registrados por mesero aparecen instantáneamente a baristas.
-    * Alertas automáticas distribuidas al equipo autorizado.
+### Para el Cliente (Interfaz de Pedidos)
+Accesible vía `client_order.html`
 
-## Tecnologías Utilizadas
+* **Página Exclusiva de Pedidos:** Una interfaz simplificada para que los clientes exploren el menú y realicen sus pedidos sin necesidad de autenticación.
+* **Visualización del Menú:** Muestra los productos disponibles del inventario con sus precios.
+* **Construcción de Pedidos:** Los clientes pueden añadir ítems a su carrito.
+* **Resumen del Pedido:** Muestra el total a pagar y los productos seleccionados.
+* **RNF-012 (Horario de Venta):** También deshabilita la toma de pedidos para clientes después de las 9:30 PM.
 
-* **HTML5:** Estructura de la aplicación.
-* **CSS3:** Estilos y diseño de la interfaz de usuario.
-* **JavaScript (Vanilla JS):** Lógica del sistema, interactividad y manejo de datos del frontend.
+### Simulación de Proceso de Pago
+Accesible vía `payment_simulation.html` (Redireccionado desde `client_order.html`)
 
-## Cómo Ejecutar el Proyecto
+* **Simulación de Pago con Tarjeta:** Una página para demostrar el proceso de pago con un formulario de tarjeta de crédito/débito.
+* **Resumen del Monto:** Muestra el total a pagar del pedido que se va a procesar.
+* **Validación Básica:** Incluye validaciones simples de formato para los campos de la tarjeta.
+* **Estado de la Transacción:** Simula un resultado exitoso o fallido del pago con un mensaje al usuario.
+* **RNF-017 (Registro de Pagos):** Aunque es una simulación, representa el punto donde se registraría la transacción.
 
-1.  **Clona el repositorio:**
-    ```bash
-    git clone [https://github.com/tu-usuario/cafe-luna-system.git](https://github.com/tu-usuario/cafe-luna-system.git)
-    ```
-2.  **Navega al directorio del proyecto:**
-    ```bash
-    cd cafe-luna-system
-    ```
-3.  **Abre el archivo `index.html` en tu navegador web preferido.** No necesitas un servidor local para empezar, ya que es un proyecto puramente de frontend.
+## Estructura del Proyecto:
 
-## Credenciales de Prueba (Simuladas)
+├── index.html                  # Interfaz de administración (login, dashboard, inventario, pedidos, reportes)
+├── client_order.html           # Interfaz para que el cliente realice pedidos
+├── payment_simulation.html     # Interfaz de simulación de pago con tarjeta
+├── style.css                   # Estilos CSS para ambas interfaces
+├── script.js                   # Lógica JavaScript (autenticación, inventario, pedidos, reportes)
+└── README.md                   # Este archivo
 
-Para probar los diferentes roles:
+## Acceso y Navegación
 
-* **Propietaria:** `usuario: propietaria`, `contraseña: pass123`
-* **Barista Senior:** `usuario: baristasenior`, `contraseña: pass123`
-* **Barista:** `usuario: barista`, `contraseña: pass123`
-* **Mesero:** `usuario: mesero`, `contraseña: pass123`
+### Credenciales de Acceso (para `index.html`)
 
-## Futuras Mejoras (Consideraciones para el Backend)
+| Usuario       | Contraseña | Rol         | Secciones Accesibles                 |
+| :------------ | :--------- | :---------- | :----------------------------------- |
+| `propietaria` | `pass123`  | Propietaria | Dashboard, Inventario, Pedidos, Pagos y Caja, Reportes |
+| `barista`     | `pass123`  | Barista     | Dashboard, Pedidos                   |
+| `mesero`      | `pass123`  | Mesero      | Dashboard, Pedidos                   |
 
-Para una implementación completa y robusta de todas las reglas de negocio, especialmente las relacionadas con persistencia de datos, seguridad avanzada, backups y comunicación en tiempo real, se requeriría un **backend** con tecnologías como Node.js, Python/Django, PHP/Laravel, etc., y una base de datos (SQL o NoSQL).
+### Enlaces para Demostración
 
-Funcionalidades que idealmente requieren backend:
-* Persistencia de inventario, pedidos, usuarios, etc.
-* Sistema de autenticación y autorización seguro.
-* Generación de reportes complejos.
-* Manejo de transacciones de pago reales.
-* Comunicación en tiempo real (websockets).
-* Gestión de clientes y su historial de compras (RN-013).
-* Contador de productos vendidos para determinar "popularidad" (RN-014).
-* La funcionalidad de "backup automático" (RN-017) es puramente de backend.
+* **Interfaz de Administración:** [TuLinkDeGitHubPages]/index.html
+    * Ejemplo: `https://TuUsuario.github.io/tu-repositorio/index.html`
+* **Interfaz de Pedidos para Clientes:** [TuLinkDeGitHubPages]/client_order.html
+    * Ejemplo: `https://TuUsuario.github.io/tu-repositorio/client_order.html`
+
+**Nota:** Reemplaza `[TuLinkDeGitHubPages]` o `TuUsuario.github.io/tu-repositorio/` con la URL real de tu GitHub Pages.
+
+## Cómo Usar (Localmente)
+
+1.  Clona o descarga este repositorio.
+2.  Abre los archivos `index.html`, `client_order.html` o `payment_simulation.html` directamente en tu navegador.
+
+## Estado del Proyecto
+
+Este es un prototipo demostrativo. Los datos de inventario y pedidos son volátiles y se reinician al recargar la página, ya que no hay una base de datos persistente. La funcionalidad de pago es meramente una simulación.
+
+---
