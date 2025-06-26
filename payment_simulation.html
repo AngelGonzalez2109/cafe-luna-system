@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Café Luna - Pago con Tarjeta</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos específicos para la simulación de pago, puedes moverlos a style.css si quieres */
+        #payment-section {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 30px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background-color: #fff;
+            text-align: center;
+        }
+        #payment-section h2 {
+            color: #5C4033; /* Marrón oscuro del café */
+            margin-bottom: 20px;
+        }
+        #payment-summary {
+            background-color: #f8f8f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        #payment-summary p {
+            margin: 5px 0;
+            font-size: 1.1em;
+        }
+        #payment-summary strong {
+            color: #5C4033;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group input[type="month"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        .form-group.half-width {
+            display: inline-block;
+            width: 48%; /* Para poner campos uno al lado del otro */
+            margin-right: 4%;
+        }
+        .form-group.half-width:last-child {
+            margin-right: 0;
+        }
+        button {
+            background-color: #7B3F00; /* Un color café más oscuro */
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+            margin-top: 15px;
+        }
+        button:hover {
+            background-color: #5C4033;
+        }
+        #payment-message {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Café Luna</h1>
+        <p>Procesando tu Pago</p>
+    </header>
+
+    <main>
+        <section id="payment-section">
+            <h2>Simulación de Pago con Tarjeta</h2>
+
+            <div id="payment-summary">
+                <p>Monto a pagar: <strong>$<span id="payment-amount">0.00</span></strong></p>
+                <p>Número de productos: <span id="payment-items-count">0</span></p>
+                <p>Cliente: <span id="payment-customer-name"></span></p>
+            </div>
+
+            <form id="card-payment-form">
+                <div class="form-group">
+                    <label for="card-number">Número de Tarjeta:</label>
+                    <input type="text" id="card-number" placeholder="XXXX XXXX XXXX XXXX" required pattern="\d{4} ?\d{4} ?\d{4} ?\d{4}" maxlength="19">
+                </div>
+                <div class="form-group">
+                    <label for="card-name">Nombre en la Tarjeta:</label>
+                    <input type="text" id="card-name" placeholder="Como aparece en la tarjeta" required>
+                </div>
+                <div class="form-group half-width">
+                    <label for="expiry-date">Fecha de Vencimiento (MM/AA):</label>
+                    <input type="text" id="expiry-date" placeholder="MM/AA" required pattern="(0[1-9]|1[0-2])\/\d{2}" maxlength="5">
+                </div>
+                <div class="form-group half-width">
+                    <label for="cvv">CVV:</label>
+                    <input type="text" id="cvv" placeholder="XXX" required pattern="\d{3,4}" maxlength="4">
+                </div>
+                <button type="submit">Pagar Ahora</button>
+            </form>
+
+            <div id="payment-message">
+                </div>
+
+            <button id="back-to-menu-btn" style="display: none;">Volver al Menú</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Café Luna - Sistema de Gestión</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const paymentAmountSpan = document.getElementById('payment-amount');
+            const paymentItemsCountSpan = document.getElementById('payment-items-count');
+            const paymentCustomerNameSpan = document.getElementById('payment-customer-name');
+            const cardPaymentForm = document.getElementById('card-payment-form');
+            const paymentMessageDiv = document.getElementById('payment-message');
+            const backToMenuBtn = document.getElementById('back-to-menu-btn');
+
+            // Recuperar los datos del pedido desde sessionStorage
+            const lastOrder = JSON.parse(sessionStorage.getItem('currentClientOrder'));
+
+            if (lastOrder) {
+                paymentAmountSpan.textContent = lastOrder.total.toFixed(2);
+                paymentItemsCountSpan.textContent = lastOrder.items.length;
+                if (lastOrder.customer) {
+                    paymentCustomerNameSpan.textContent = lastOrder.customer;
+                } else {
+                    paymentCustomerNameSpan.textContent = 'Invitado';
+                }
+            } else {
+                // Si no hay pedido, redirigir o mostrar un mensaje
+                paymentMessageDiv.textContent = 'No hay pedido para procesar.';
+                backToMenuBtn.style.display = 'block';
+                // Opcional: Redirigir automáticamente
+                // setTimeout(() => { window.location.href = 'client_order.html'; }, 3000);
+            }
+
+            cardPaymentForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                // Simulación de validación (muy básica)
+                const cardNumber = document.getElementById('card-number').value.replace(/\s/g, '');
+                const expiryDate = document.getElementById('expiry-date').value;
+                const cvv = document.getElementById('cvv').value;
+                const cardName = document.getElementById('card-name').value.trim();
+
+                if (cardNumber.length < 13 || cardNumber.length > 19 || !/^\d+$/.test(cardNumber)) {
+                    paymentMessageDiv.style.color = 'red';
+                    paymentMessageDiv.textContent = 'Número de tarjeta inválido.';
+                    return;
+                }
+                if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiryDate)) {
+                    paymentMessageDiv.style.color = 'red';
+                    paymentMessageDiv.textContent = 'Fecha de vencimiento inválida (MM/AA).';
+                    return;
+                }
+                if (!/^\d{3,4}$/.test(cvv)) {
+                    paymentMessageDiv.style.color = 'red';
+                    paymentMessageDiv.textContent = 'CVV inválido (3 o 4 dígitos).';
+                    return;
+                }
+                if (cardName === '') {
+                    paymentMessageDiv.style.color = 'red';
+                    paymentMessageDiv.textContent = 'Por favor, ingresa el nombre en la tarjeta.';
+                    return;
+                }
+
+                // Simular un tiempo de procesamiento
+                paymentMessageDiv.style.color = 'blue';
+                paymentMessageDiv.textContent = 'Procesando pago...';
+                cardPaymentForm.querySelector('button[type="submit"]').disabled = true;
+
+                setTimeout(() => {
+                    const isSuccess = Math.random() > 0.1; // 90% de éxito, 10% de fallo simulado
+
+                    if (isSuccess) {
+                        paymentMessageDiv.style.color = 'green';
+                        paymentMessageDiv.textContent = '¡Pago exitoso! Tu pedido ha sido confirmado.';
+                        sessionStorage.removeItem('currentClientOrder'); // Limpiar el pedido después del pago
+                    } else {
+                        paymentMessageDiv.style.color = 'red';
+                        paymentMessageDiv.textContent = '¡Error en el pago! Por favor, verifica tus datos o intenta con otra tarjeta.';
+                        cardPaymentForm.querySelector('button[type="submit"]').disabled = false; // Re-habilitar botón
+                    }
+                    backToMenuBtn.style.display = 'block'; // Mostrar botón para volver al menú
+                }, 2000); // Simula 2 segundos de procesamiento
+            });
+
+            backToMenuBtn.addEventListener('click', () => {
+                window.location.href = 'client_order.html'; // Redirigir de vuelta a la página de pedidos del cliente
+            });
+        });
+    </script>
+</body>
+</html>
