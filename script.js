@@ -1,21 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Detectar si estamos en la página de administración (index.html) o cliente (client_order.html)
+    // Usamos la existencia del formulario de login como indicador.
     const isAdminPage = document.getElementById('login-section') !== null;
 
+    // --- Simulación de Datos Globales (accesibles por ambas partes del script) ---
+    // Estos datos se pierden al recargar la página ya que no hay un backend/DB.
     let inventory = [
         { id: 'ing1', name: 'Café Grano', stock: 1500, unit: 'g' }, // 1.5 kg
         { id: 'ing2', name: 'Leche Entera', stock: 5000, unit: 'ml' }, // 5 lt
         { id: 'ing3', name: 'Azúcar', stock: 200, unit: 'g' },
         { id: 'prod1', name: 'Espresso', stock: 100, unit: 'unidades', price: 35.00 },
         { id: 'prod2', name: 'Latte', stock: 80, unit: 'unidades', price: 45.00 },
-        { id: 'prod3', name: 'Croissant', stock: 30, unit: 'unidades', price: 25.00 }
+        { id: 'prod3', name: 'Croissant', stock: 30, unit: 'unidades', price: 25.00 },
+        { id: 'prod4', name: 'Té Verde', stock: 70, unit: 'unidades', price: 30.00 } // Más productos para probar
     ];
 
-    let orders = []; // Para almacenar los pedidos
-    let productSalesCount = {}; // Objeto para llevar un conteo de ventas por producto (para reportes)
+    let orders = []; // Para almacenar todos los pedidos (tanto de admin/mesero como de clientes)
+    let productSalesCount = {}; // Para el reporte de productos más vendidos
 
-    let currentOrderItems = []; // Para almacenar los ítems del pedido actual (tanto para admin/mesero como para cliente)
-    let currentOrderTotal = 0; // Total del pedido actual
+    // Variables para el pedido actual (serán usadas tanto por el admin/mesero como por el cliente)
+    let currentOrderItems = [];
+    let currentOrderTotal = 0;
 
     // --- Lógica de la Página de Administración (index.html) ---
     if (isAdminPage) {
@@ -39,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let currentUser = null; // Almacena el usuario autenticado
 
+        // --- Funciones de autenticación y navegación ---
         function authenticateUser(username, password) {
             if (users[username] && users[username].password === password) {
                 currentUser = { username: username, role: users[username].role };
@@ -91,10 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (item.section === inventorySection) {
                             renderInventory();
                         } else if (item.section === ordersSection) {
-                            // Renderizar el menú en la página de administración
-                            renderMenuAdmin();
-                        } else if (item.section === reportsSection) { // CAMBIO: Para que renderice reportes al hacer clic en la nav
-                            renderFinancialReports();
+                            renderMenuAdmin(); // Carga el menú específico para admin/mesero
+                        } else if (item.section === reportsSection) {
+                            renderFinancialReports(); // Carga los reportes
                         }
                     });
                 } else if (item.action === 'logout') {
@@ -222,16 +227,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // --- Funcionalidad de Pedidos (RN-015, RN-006, RN-012, RN-018, RN-013, RN-014) ---
-        // Estas son las variables para la página de ADMIN/MESERO
-        const menuDisplayAdmin = document.getElementById('menu-display'); // Renombrado para claridad
-        const orderListAdmin = document.getElementById('order-list'); // Renombrado para claridad
-        const orderTotalSpanAdmin = document.getElementById('order-total'); // Renombrado para claridad
-        const placeOrderBtnAdmin = document.getElementById('place-order-btn'); // Renombrado para claridad
-        const cancelOrderBtnAdmin = document.getElementById('cancel-order-btn'); // Renombrado para claridad
+        // --- Funcionalidad de Pedidos (RN-015, RN-006, RN-012, RN-018, RN-013, RN-014) para Admin/Mesero ---
+        const menuDisplayAdmin = document.getElementById('menu-display');
+        const orderListAdmin = document.getElementById('order-list');
+        const orderTotalSpanAdmin = document.getElementById('order-total');
+        const placeOrderBtnAdmin = document.getElementById('place-order-btn');
+        const cancelOrderBtnAdmin = document.getElementById('cancel-order-btn');
 
         function renderMenuAdmin() { // Función para renderizar el menú en la página de administración
             menuDisplayAdmin.innerHTML = '<h3>Menú</h3>';
+            // Filtrar productos disponibles (ítems con precio y stock > 0)
             const availableProducts = inventory.filter(item => item.price !== undefined && item.stock > 0);
 
             if (availableProducts.length === 0) {
@@ -240,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             availableProducts.forEach(product => {
                 const productDiv = document.createElement('div');
-                let popularTag = '';
+                let popularTag = ''; // Lógica para RN-014 si se implementara completamente
                 productDiv.innerHTML = `
                     <span>${product.name} - $${product.price.toFixed(2)}</span> ${popularTag}
                     <button data-id="${product.id}" class="add-to-order-btn-admin">Agregar</button>
@@ -255,9 +260,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (product && product.stock > 0) {
                         currentOrderItems.push(product);
-                        product.stock--;
+                        product.stock--; // Simular reducción de inventario (temporal para el pedido)
                         updateOrderSummaryAdmin(); // Usa la función de resumen para admin
-                        renderMenuAdmin();
+                        renderMenuAdmin(); // Actualizar el menú si se agota un producto
                     } else if (product && product.stock <= 0) {
                         alert(`¡${product.name} está agotado! No se puede registrar el pedido (RN-008).`);
                     }
@@ -307,13 +312,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const order = {
-                id: 'ORD' + Date.now(),
-                items: currentOrderItems,
+                id: 'ORD_ADMIN' + Date.now(), // ID para pedidos de admin
+                items: currentOrderItems.map(item => ({ id: item.id, name: item.name, price: item.price })), // Guardar copia de ítems
                 total: currentOrderTotal,
-                timestamp: new Date(),
+                timestamp: new Date().toISOString(),
                 status: 'Pendiente',
+                customer: currentUser.role // Indicar que fue un pedido del personal
             };
-            orders.push(order);
+            orders.push(order); // Añadir a la lista global de pedidos
 
             currentOrderItems.forEach(item => {
                 productSalesCount[item.id] = (productSalesCount[item.id] || 0) + 1;
@@ -322,6 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Pedido realizado con éxito!');
             console.log('Nuevo Pedido (Admin/Mesero):', order);
 
+            // Resetear el pedido y actualizar inventario (esto es una simulación)
             currentOrderItems = [];
             updateOrderSummaryAdmin();
             renderMenuAdmin();
@@ -351,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const closeCashRegisterBtn = document.getElementById('close-cash-register-btn');
         const dailyReportsDiv = document.getElementById('daily-reports');
 
-        if (closeCashRegisterBtn) { // Asegurarse de que el botón existe en la página actual
+        if (closeCashRegisterBtn) {
             closeCashRegisterBtn.addEventListener('click', () => {
                 const now = new Date();
                 const currentHour = now.getHours();
@@ -365,7 +372,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 generateDailyReport();
             });
         }
-
 
         function generateDailyReport() {
             const now = new Date();
@@ -444,7 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             availableProducts.forEach(product => {
                 const productDiv = document.createElement('div');
-                productDiv.classList.add('menu-item'); // Puedes usar esta clase para estilizarlo con CSS
+                productDiv.classList.add('menu-item');
                 productDiv.innerHTML = `
                     <h3>${product.name}</h3>
                     <p>$${product.price.toFixed(2)}</p>
@@ -477,7 +483,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentHour > 21 || (currentHour === 21 && currentMinute >= 30)) {
                 clientPlaceOrderBtn.disabled = true;
                 clientMenuDisplay.querySelectorAll('.add-to-order-btn-client').forEach(btn => btn.disabled = true);
-                // Si quieres, puedes mostrar un mensaje al cliente
                 if (!document.getElementById('closed-message')) {
                     const message = document.createElement('p');
                     message.id = 'closed-message';
@@ -521,31 +526,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Aquí podrías agregar un pequeño formulario para que el cliente ingrese su nombre/número de mesa
             const customerName = prompt("¡Gracias por tu pedido! Por favor, ingresa tu nombre (o número de mesa):");
-            if (!customerName) {
+            if (!customerName || customerName.trim() === '') {
                 alert("Pedido cancelado. Por favor, ingresa un nombre para continuar.");
                 return;
             }
 
             const order = {
                 id: 'ORD_CLIENT' + Date.now(),
-                items: currentOrderItems,
+                items: currentOrderItems.map(item => ({ id: item.id, name: item.name, price: item.price })),
                 total: currentOrderTotal,
-                timestamp: new Date(),
+                timestamp: new Date().toISOString(),
                 status: 'Pendiente',
-                customer: customerName // Guardar el nombre del cliente
+                customer: customerName.trim()
             };
-            orders.push(order); // Añadir el pedido a la lista global de pedidos
-            
-            // Simular notificación al personal (en un sistema real, esto sería un websocket o API call)
-            console.log(`¡Nuevo Pedido de Cliente! Nombre: ${customerName}, Total: $${currentOrderTotal.toFixed(2)}`);
-            alert(`¡Pedido de ${customerName} recibido con éxito! Total: $${currentOrderTotal.toFixed(2)}. Pronto estará listo.`);
 
-            // Resetear el pedido del cliente y actualizar el menú
+            // ALMACENAR EL PEDIDO EN SESSIONSTORAGE ANTES DE REDIRIGIR A LA PÁGINA DE PAGO
+            sessionStorage.setItem('currentClientOrder', JSON.stringify(order));
+
+            // Guardar el pedido en la lista global de pedidos (para que el admin lo vea en sus reportes)
+            orders.push(order);
+            
+            // Actualizar productSalesCount para los reportes de productos más vendidos
+            currentOrderItems.forEach(item => {
+                productSalesCount[item.id] = (productSalesCount[item.id] || 0) + 1;
+            });
+
+
+            console.log(`¡Nuevo Pedido de Cliente! Nombre: ${customerName}, Total: $${currentOrderTotal.toFixed(2)}. Redirigiendo a pago.`);
+
+            // Resetear el pedido del cliente y el menú antes de redirigir
             currentOrderItems = [];
             updateOrderSummaryClient();
-            renderMenuClient();
+            // No llamar a renderMenuClient() aquí, ya que vamos a cambiar de página.
+
+            // REDIRIGIR A LA PÁGINA DE SIMULACIÓN DE PAGO
+            window.location.href = 'payment_simulation.html';
         });
 
         clientCancelOrderBtn.addEventListener('click', () => {
