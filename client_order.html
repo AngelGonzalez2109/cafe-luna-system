@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Café Luna - ¡Haz tu Pedido!</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>Café Luna</h1>
+        <p>¡Bienvenido! Haz tu pedido aquí.</p>
+    </header>
+
+    <main>
+        <section id="client-order-section" class="active">
+            <h2>Realizar Pedido</h2>
+
+            <div id="client-menu-display" class="menu-items">
+                </div>
+
+            <h3>Tu Pedido Actual</h3>
+            <ul id="client-order-list">
+                </ul>
+            <p>Total: $<span id="client-order-total">0.00</span></p>
+
+            <button id="client-place-order-btn">Confirmar Pedido</button>
+            <button id="client-cancel-order-btn">Cancelar Pedido</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Café Luna - Sistema de Gestión</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
