@@ -5,14 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Café Luna - Sistema de Gestión</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
         <h1>Café Luna</h1>
-        <nav>
-            <ul id="main-nav">
-                </ul>
-        </nav>
+        <nav id="main-nav">
+            </nav>
+        <div id="user-info">
+            <p>Bienvenido, <span id="current-user-role">Invitado</span></p>
+        </div>
     </header>
 
     <main>
@@ -25,19 +27,20 @@
                 <input type="password" id="password" name="password" required>
                 <button type="submit">Entrar</button>
             </form>
-            <p id="login-error" class="error-message"></p>
+            <p id="login-error" style="color: red;"></p>
         </section>
 
         <section id="dashboard-section" class="hidden">
             <h2>Panel de Control</h2>
-            <p>Bienvenido, <span id="current-user-role"></span>.</p>
+            <p>Bienvenido, <span id="dashboard-user">...</span>. Aquí puedes ver un resumen de las operaciones.</p>
             </section>
 
         <section id="inventory-section" class="hidden">
             <h2>Control de Inventario</h2>
-            <div id="inventory-list">
-                </div>
-            <button id="add-item-btn" class="hidden">Agregar Nuevo Ítem</button>
+            <ul id="inventory-list">
+                </ul>
+            <button id="add-item-btn">Agregar Nuevo Ítem</button>
+
             <div id="add-item-form" class="hidden">
                 <h3>Nuevo Ítem</h3>
                 <label for="item-name">Nombre:</label>
@@ -58,22 +61,21 @@
 
         <section id="orders-section" class="hidden">
             <h2>Sistema de Pedidos</h2>
-            <div id="menu-display">
-                <h3>Menú</h3>
+
+            <div id="menu-display" class="menu-items">
                 </div>
-            <div id="current-order">
-                <h3>Pedido Actual</h3>
-                <ul id="order-list"></ul>
-                <p>Total: $<span id="order-total">0.00</span></p>
-                <button id="place-order-btn">Realizar Pedido</button>
-                <button id="cancel-order-btn">Cancelar Pedido</button>
-            </div>
+
+            <h3>Pedido Actual</h3>
+            <ul id="order-list">
+                </ul>
+            <p>Total: $<span id="order-total">0.00</span></p>
+
+            <button id="place-order-btn">Realizar Pedido</button>
+            <button id="cancel-order-btn">Cancelar Pedido</button>
         </section>
 
         <section id="payments-section" class="hidden">
             <h2>Gestión de Pagos y Caja</h2>
-            <div id="payment-options">
-                </div>
             <button id="close-cash-register-btn">Cerrar Caja</button>
             <div id="daily-reports">
                 </div>
@@ -84,8 +86,7 @@
             <div id="financial-reports-display">
                 </div>
         </section>
-
-        </main>
+    </main>
 
     <footer>
         <p>&copy; 2025 Café Luna - Sistema de Gestión</p>
